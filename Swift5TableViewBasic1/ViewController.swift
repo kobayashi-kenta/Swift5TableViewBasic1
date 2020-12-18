@@ -15,7 +15,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     
     @IBOutlet weak var tableView: UITableView!
     
-
+    var textArray = [String]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,9 +26,14 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        return 1
+        navigationController?.isNavigationBarHidden = true
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return textArray.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -38,10 +43,28 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+
+        
+        cell.selectionStyle = .none
+        cell.textLabel?.text = textArray[indexPath.row]
+        cell.imageView!.image = UIImage(named: "checkImage")
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let nextVC =
+            storyboard?.instantiateViewController(identifier: "next") as! NextViewController
+        
+        nextVC.toDoString = textArray[indexPath.row]
+        
+        
+        navigationController?.pushViewController(nextVC, animated: true)
+        
+        
         
     }
     
@@ -50,5 +73,16 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         return view.frame.size.height/6
     }
 
+    
+    // text Fieldのリターンキーが押された時のメソッド
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        textArray.append(textField.text!)
+        textField.resignFirstResponder()
+        textField.text = ""
+        tableView.reloadData()
+        
+       return true
+    }
 }
 
